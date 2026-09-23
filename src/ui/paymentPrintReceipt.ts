@@ -82,7 +82,7 @@ export function createPaymentPrintReceiptEl(
     basLogo.remove()
     const fb = document.createElement('div')
     fb.className = 'receipt-print-bas-fallback'
-    fb.textContent = 'Bas'
+    fb.textContent = 'Link'
     brand.appendChild(fb)
   })
   brand.appendChild(basLogo)
