@@ -23,6 +23,7 @@ export function renderPaymentSuccessView(
   renderPaymentSuccess(root, {
     data: model.data,
     urlFullName: url.fullName.trim(),
+    urlAppName: url.appName,
     snapshot: model.paymentSuccessSnapshot,
     translator,
     onPrint() {

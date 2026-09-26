@@ -55,6 +55,7 @@ export function createCheckoutRenderer(
       showInitiateAccountCard: model.showInitiateAccountCard,
       initiateAccountDisplay: model.initiateAccountDisplay,
       urlFullName: url.fullName.trim(),
+      urlAppName: url.appName,
       otpCountdownRemaining: model.otpCountdownRemaining,
       translator,
       handlers: {

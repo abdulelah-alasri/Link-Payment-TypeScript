@@ -44,14 +44,17 @@ export function renderPaymentSuccess(
   input: {
     data: PreInitializeData
     urlFullName: string
+    urlAppName?: string
     snapshot: PaymentSuccessSnapshot
     translator: Translator
     onPrint: () => void
     onDone: () => void
   },
 ): void {
-  const { data, urlFullName, snapshot, translator, onPrint, onDone } = input
+  const { data, urlFullName, urlAppName, snapshot, translator, onPrint, onDone } =
+    input
   const { t, lang } = translator
+  const appName = (urlAppName ?? '').trim()
 
   renderAppPage(
     root,
@@ -59,6 +62,7 @@ export function renderPaymentSuccess(
       translator,
       phase: 'paymentSuccess',
       merchantName: data.miniAppInfo.name,
+      appName: appName || undefined,
       cancelHref: data.cancelUrl,
       layoutModifier: 'payment-success',
     },

@@ -17,8 +17,10 @@ export function renderCompleted(
   data: PreInitializeData,
   translator: Translator,
   urlFullName: string,
+  urlAppName = '',
 ): void {
   const { t, lang } = translator
+  const appName = urlAppName.trim()
   const resolvedAmount = resolvedPreInitAmount(data)
   const amountWithCurrency =
     resolvedAmount != null
@@ -49,6 +51,7 @@ export function renderCompleted(
       translator,
       phase: 'completed',
       merchantName: data.miniAppInfo.name,
+      appName: appName || undefined,
       cancelHref: data.cancelUrl,
     },
     (main) => {

@@ -1,4 +1,5 @@
 import type { Translator } from '../i18n'
+import { goBack } from '../logics/navigation/goBack'
 import { isAllowedMerchantNavigationUrl } from '../util/navigationUrl'
 import { publicAssetUrl } from '../util/publicAsset'
 
@@ -13,6 +14,11 @@ export interface SiteFooterOptions {
   translator: Translator
   phase: AppPhase
   merchantName?: string
+  /**
+   * Hosting app name from URL `appName`.
+   * When set, cancel/return is shown above the footer links on payment phases.
+   */
+  appName?: string | null
   /**
    * Return/cancel URL from checkout session (platform BFF / merchant),
    * typically `cancelUrl` from pre-initialize.
@@ -56,28 +62,43 @@ function applyLanguageParam(code: string): void {
 type CancelRowModel =
   | { mode: 'hidden' }
   | { mode: 'link'; href: string; text: string }
+  | { mode: 'button'; text: string }
+
+function isPaymentPhase(phase: AppPhase): boolean {
+  return (
+    phase === 'checkout' ||
+    phase === 'completed' ||
+    phase === 'paymentSuccess'
+  )
+}
 
 /**
- * Cancel/return uses only the session cancel URL from pre-initialize.
- * No invented history.back() when Link/session did not provide a cancel URL.
+ * Prefer URL `appName` for cancel label on all payment steps.
+ * Falls back to session `cancelUrl` + merchant name when appName is absent.
  */
 function cancelRowModel(opts: SiteFooterOptions): CancelRowModel {
-  const explicit = opts.cancelHref?.trim()
-  if (!isAllowedMerchantNavigationUrl(explicit)) {
+  if (!isPaymentPhase(opts.phase)) {
     return { mode: 'hidden' }
   }
-  if (
-    opts.phase !== 'checkout' &&
-    opts.phase !== 'completed' &&
-    opts.phase !== 'paymentSuccess'
-  ) {
+
+  const appName = opts.appName?.trim()
+  const cancelHref = opts.cancelHref?.trim()
+  const hrefOk = isAllowedMerchantNavigationUrl(cancelHref)
+
+  if (appName) {
+    const text = opts.translator.t('cancelReturnTo', { merchant: appName })
+    if (hrefOk) return { mode: 'link', href: cancelHref!, text }
+    return { mode: 'button', text }
+  }
+
+  if (!hrefOk) {
     return { mode: 'hidden' }
   }
   const merchant = opts.merchantName?.trim()
   const text = merchant
     ? opts.translator.t('cancelReturnTo', { merchant })
     : opts.translator.t('cancelReturnPlatform')
-  return { mode: 'link', href: explicit!, text }
+  return { mode: 'link', href: cancelHref!, text }
 }
 
 const yemenFlagSvg = `<svg class="footer-flag" width="26" height="17" viewBox="0 0 26 17" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
@@ -106,6 +127,16 @@ export function renderSiteFooter(
     cancel.href = cancelCfg.href
     cancel.rel = 'noopener noreferrer'
     cancel.textContent = cancelCfg.text
+    cancelRow.appendChild(cancel)
+    footer.appendChild(cancelRow)
+  } else if (cancelCfg.mode === 'button') {
+    const cancel = document.createElement('button')
+    cancel.type = 'button'
+    cancel.className = 'footer-cancel-link'
+    cancel.textContent = cancelCfg.text
+    cancel.addEventListener('click', () => {
+      goBack()
+    })
     cancelRow.appendChild(cancel)
     footer.appendChild(cancelRow)
   }

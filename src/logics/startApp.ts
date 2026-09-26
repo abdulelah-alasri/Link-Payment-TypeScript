@@ -51,12 +51,7 @@ export function startApp(): void {
       root,
       model,
       translator,
-      url: {
-        language: url.language,
-        userIdentifier: url.userIdentifier,
-        fullName: url.fullName,
-        trxToken: url.checkoutToken,
-      } as never,
+      url,
       renderCheckoutView,
     })
   }
@@ -64,12 +59,7 @@ export function startApp(): void {
   renderCheckoutView = createCheckoutRenderer({
     root,
     model,
-    url: {
-      language: url.language,
-      userIdentifier: url.userIdentifier,
-      fullName: url.fullName,
-      trxToken: url.checkoutToken,
-    } as never,
+    url,
     translator,
     otpCountdown: {
       start: otpCountdown.start,

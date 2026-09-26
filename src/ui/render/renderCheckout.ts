@@ -42,6 +42,8 @@ export function renderCheckout(
     otpCountdownRemaining?: number | null
     /** From URL `fullName`; shown after order ID when non-empty */
     urlFullName?: string
+    /** From URL `appName`; shown under order ID when non-empty */
+    urlAppName?: string
     translator: Translator
     handlers: CheckoutHandlers
   },
@@ -60,6 +62,7 @@ export function renderCheckout(
     initiateAccountDisplay,
     otpCountdownRemaining,
     urlFullName,
+    urlAppName,
     translator,
     handlers,
   } = input
@@ -71,12 +74,15 @@ export function renderCheckout(
   const selected =
     methods.find((m) => m.id === selectedMethodId) ?? methods[0] ?? null
 
+  const appName = (urlAppName ?? '').trim()
+
   renderAppPage(
     root,
     {
       translator,
       phase: 'checkout',
       merchantName: data.miniAppInfo.name,
+      appName: appName || undefined,
       cancelHref: data.cancelUrl,
       layoutModifier: 'checkout',
     },
@@ -160,6 +166,9 @@ export function renderCheckout(
       const details = document.createElement('section')
       details.className = 'details-card'
       details.appendChild(detailRow(t('orderId'), displayOrderReference(data)))
+      if (appName) {
+        details.appendChild(detailRow(t('application'), appName))
+      }
       const payerName = (urlFullName ?? '').trim()
       if (payerName) {
         details.appendChild(detailRow(t('customerName'), payerName))

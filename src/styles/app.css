@@ -1271,16 +1271,22 @@ body {
 
 .footer-cancel-link {
   display: inline-block;
-  color: var(--color-link);
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  color: var(--color-primary);
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
   text-align: center;
   line-height: 1.4;
 }
 
 .footer-cancel-link:hover {
-  color: var(--color-primary);
+  color: var(--color-primary-hover);
   text-decoration: underline;
   text-underline-offset: 3px;
 }

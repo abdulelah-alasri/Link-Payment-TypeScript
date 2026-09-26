@@ -16,5 +16,5 @@ export interface RenderCompletedViewDeps {
 export function renderCompletedView(deps: RenderCompletedViewDeps): void {
   const { root, model, translator, url } = deps
   if (!model.data) return
-  renderCompleted(root, model.data, translator, url.fullName.trim())
+  renderCompleted(root, model.data, translator, url.fullName.trim(), url.appName)
 }
